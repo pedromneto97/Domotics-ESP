@@ -23,6 +23,3 @@ class Humidity(Sensor):
     def read(self):
         self.sensor.measure()
         return self.sensor.humidity()
-
-    def get_id(self):
-        return self._id
