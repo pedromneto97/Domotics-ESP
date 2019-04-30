@@ -7,7 +7,7 @@ import network
 import ntptime
 import urequests
 import utime
-from machine import Pin, Timer
+from machine import Pin, Timer, idle
 
 from Humidity import Humidity, Humidity_Sensor
 from Temperature import Temperature, Temperature_Sensor
@@ -51,10 +51,10 @@ class Device:
     @staticmethod
     def set_data(_id, value):
         data = {
-            "topic": "com.herokuapp.crossbar-pedro.measurement.5cc7750fdd27450c5cd0b591.create",
+            "topic": "com.herokuapp.crossbar-pedro.measurement." + _id + ".create",
             "args": [ujson.dumps({
                 "sensor": _id,
-                "timestamp": utime.localtime(),
+                "timestamp": utime.localtime()[0:6],
                 "value": value
             })]
         }
