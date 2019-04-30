@@ -22,4 +22,4 @@ class Temperature(Sensor):
 
     def read(self):
         self.sensor.measure()
-        self.sensor.temperature()
+        return self.sensor.temperature()
