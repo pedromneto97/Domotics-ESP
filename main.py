@@ -4,10 +4,10 @@ except:
     import json as ujson
 
 import network
-from machine import Pin, Timer
-import utime
 import ntptime
 import urequests
+import utime
+from machine import Pin, Timer
 
 from Humidity import Humidity, Humidity_Sensor
 from Temperature import Temperature, Temperature_Sensor
@@ -58,7 +58,8 @@ class Device:
                 "value": value
             })]
         }
-        return urequests.post("https://crossbar-pedro.herokuapp.com/publish", json=data)
+        r = urequests.post("https://crossbar-pedro.herokuapp.com/publish", json=data)
+        r.close()
 
 
 with open('.env', 'r') as f:
