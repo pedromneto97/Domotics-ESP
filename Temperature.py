@@ -8,8 +8,9 @@ class Temperature_Sensor:
 
 
 class Temperature(Sensor):
-    def __init__(self, pin, sensor_type: str):
+    def __init__(self, pin, sensor_type: str, _id):
         self.pin = pin
+        self._id = _id
         if sensor_type == 0:
             from dht import DHT11
             self.sensor = DHT11(pin)
