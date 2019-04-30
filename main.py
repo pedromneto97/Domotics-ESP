@@ -47,6 +47,7 @@ class Device:
     def read_sensors(self, t=None):
         for scene in self.scenes:
             self.set_data(scene.get_id(), scene.read())
+        return idle()
 
     @staticmethod
     def set_data(_id, value):
@@ -64,3 +65,4 @@ class Device:
 
 with open('.env', 'r') as f:
     device = Device(ujson.loads(f.read()))
+idle()
