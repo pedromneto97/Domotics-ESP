@@ -7,17 +7,16 @@ import network
 import ntptime
 import urequests
 import utime
-from machine import Timer, idle
+from machine import lightsleep, reset
 
 from Scenes import Scenes
 
 
 class Device:
     def __init__(self, env):
-        self.sta = network.WLAN(network.STA_IF)
+        self.sta = network.WLAN(network.STA_IF)  # type: network
         self.sta.active(True)
-        self.scenes = Scenes()
-        self.timer = Timer(0)
+        self.scenes = Scenes()  # type: Scenes
         if env.get('wireless') and env.get('wireless').get('ssid') and env.get('wireless').get('password'):
             self.sta.connect(env.get('wireless').get('ssid'), env.get('wireless').get('password'))
             count = 0
@@ -33,15 +32,10 @@ class Device:
             for item in env.get('scenes'):
                 self.scenes.add_sensors(type=item['type'], sensor_type=item['pattern'], _id=item['_id'])
 
-        utime.sleep(2)
-        self.read_sensors()
-        self.timer.init(mode=Timer.PERIODIC, period=6000, callback=self.read_sensors)
-
     def read_sensors(self, t=None):
         for scene in self.scenes.sensors:
-            for _id, data in scene.values():
+            for _id, data in scene.value:
                 self.set_data(_id, data)
-        idle()
 
     @staticmethod
     def set_data(_id, value):
@@ -57,6 +51,10 @@ class Device:
         r.close()
 
 
-with open('.env', 'r') as f:
-    device = Device(ujson.loads(f.read()))
-idle()
+if __name__ == '__main__':
+    with open('.env', 'r') as f:
+        device = Device(ujson.loads(f.read()))
+    while device.sta.isconnected():
+        lightsleep(60000)
+        device.read_sensors()
+    reset()
