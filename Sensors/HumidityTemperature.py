@@ -31,6 +31,8 @@ class HumidityTemperature(Sensor):
         self.sensor_type = kwargs.get('sensor_type')
 
         self._last_measure = None
+        self._last_temperature = None
+        self._last_humidity = None
 
         sensor_value = getattr(HumidityTemperatureSensor, self.sensor_type)
 
