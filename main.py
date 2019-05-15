@@ -7,17 +7,16 @@ import network
 import ntptime
 import urequests
 import utime
-from machine import Pin, Timer, idle
+from machine import Timer, idle
 
-from Humidity import Humidity, Humidity_Sensor
-from Temperature import Temperature, Temperature_Sensor
+from Scenes import Scenes
 
 
 class Device:
     def __init__(self, env):
         self.sta = network.WLAN(network.STA_IF)
         self.sta.active(True)
-        self.scenes = []
+        self.scenes = Scenes()
         self.timer = Timer(0)
         if env.get('wireless') and env.get('wireless').get('ssid') and env.get('wireless').get('password'):
             self.sta.connect(env.get('wireless').get('ssid'), env.get('wireless').get('password'))
@@ -32,22 +31,17 @@ class Device:
         utime.sleep_ms(200)
         if env.get('scenes'):
             for item in env.get('scenes'):
-                if item['type'] == 'Humidity':
-                    self.scenes.append(
-                        Humidity(Pin(item['pin'], Pin.PULL_UP), getattr(Humidity_Sensor, item['pattern']), item['_id']))
-                elif item['type'] == 'Temperature':
-                    self.scenes.append(
-                        Temperature(Pin(item['pin'], Pin.PULL_UP), getattr(Temperature_Sensor, item['pattern']),
-                                    item['_id']))
+                self.scenes.add_sensors(type=item['type'], sensor_type=item['pattern'], _id=item['_id'])
 
         utime.sleep(2)
         self.read_sensors()
         self.timer.init(mode=Timer.PERIODIC, period=1800000, callback=self.read_sensors)
 
     def read_sensors(self, t=None):
-        for scene in self.scenes:
-            self.set_data(scene.get_id(), scene.read())
-        return idle()
+        for scene in self.scenes.sensors:
+            for _id, data in scene.values():
+                self.set_data(_id, data)
+        idle()
 
     @staticmethod
     def set_data(_id, value):
