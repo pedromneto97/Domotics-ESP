@@ -60,7 +60,8 @@ class HumidityTemperature(Sensor):
         if self._last_humidity is None or abs(humidity - self._last_humidity) > (self._last_humidity / 100.0):
             self._last_humidity = humidity
             values.append((self.humidity_id, humidity))
-        if self._last_temperature is None or abs(temperature - self._last_temperature) > 0.5:
+        if self._last_temperature is None or abs(temperature - self._last_temperature) > 0.2:
+            self._last_temperature = temperature
             values.append((self.temperature_id, temperature))
         return values
 
