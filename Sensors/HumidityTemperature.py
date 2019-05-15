@@ -1,5 +1,5 @@
 from machine import Pin
-from utime import ticks_ms, ticks_diff
+from utime import ticks_ms, ticks_diff, sleep
 
 from Sensors.Sensor import Sensor
 
@@ -43,9 +43,8 @@ class HumidityTemperature(Sensor):
         else:
             raise Exception('sensor not available')
 
-        self.measure()
-        self._last_temperature = self.sensor.temperature()
-        self._last_humidity = self.sensor.humidity()
+        self._last_temperature = None
+        self._last_humidity = None
 
     def measure(self):
         _now = ticks_ms()
@@ -58,9 +57,9 @@ class HumidityTemperature(Sensor):
         humidity = self.sensor.humidity()
         temperature = self.sensor.temperature()
         values = []
-        if humidity - self._last_humidity > 0.5:
+        if self._last_humidity is None or abs(humidity - self._last_humidity) > 0.5:
             values.append((self.humidity_id, humidity))
-        if temperature - self._last_temperature > 0.5:
+        if self._last_temperature is None or abs(temperature - self._last_temperature) > 0.5:
             values.append((self.temperature_id, temperature))
         return values
 
