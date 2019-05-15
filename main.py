@@ -7,7 +7,7 @@ import network
 import ntptime
 import urequests
 import utime
-from machine import lightsleep, reset
+from machine import Timer, idle
 
 from Scenes import Scenes
 
@@ -31,6 +31,8 @@ class Device:
             for item in env.get('scenes'):
                 self.scenes.add_sensors(type=item['type'], sensor_type=item['pattern'], _id=item['_id'],
                                         pins=item['pins'])
+        self.timer = Timer(0)
+        self.timer.init(mode=Timer.PERIODIC, period=10000, callback=self.read_sensors)
 
     def read_sensors(self, t=None):
         for scene in self.scenes.sensors:
@@ -54,7 +56,5 @@ class Device:
 if __name__ == '__main__':
     with open('.env', 'r') as f:
         device = Device(ujson.loads(f.read()))
-    while device.sta.isconnected():
-        lightsleep(60000)
-        device.read_sensors()
-    reset()
+    while True:
+        idle()
