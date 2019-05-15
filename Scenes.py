@@ -10,7 +10,7 @@ class SensorsTypes:
 
 class Scenes:
     def __init__(self):
-        self.sensors: [Sensor] = []
+        self.sensors = []  # type: [Sensor]
 
     def add_sensors(self, **kwargs):
         # Check kwargs
