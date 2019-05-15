@@ -21,13 +21,13 @@ class Scenes:
         # if already has the sensor
         sensor = self.has_sensors_type(kwargs.get('sensor_type'), kwargs.get('pins'))
         if sensor is not None:
-            sensor.add_id(type, _id=kwargs.get('_id'))
+            sensor.add_id(kwargs.get('type'), _id=kwargs.get('_id'))
             return
 
         # if does not exists, append to list
         if getattr(SensorsTypes, kwargs.get('sensor_types')) == 0:
             self.sensors.append(HumidityTemperature(pins=kwargs.get('pins'), sensor_type=kwargs.get('sensor_type'),
-                                                    sensor=type, _id=kwargs.get('_id')))
+                                                    sensor=kwargs.get('type'), _id=kwargs.get('_id')))
 
     def has_sensors_type(self, sensor_type, pins):
         for item in self.sensors:
