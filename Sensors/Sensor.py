@@ -1,6 +1,6 @@
 class Sensor(object):
     """
-        Returns a list of tuples with _id and the function that return the value
+        Returns a list of tuples with _id and the value
     """
 
     def values(self):
