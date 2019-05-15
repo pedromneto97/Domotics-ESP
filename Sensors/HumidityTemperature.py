@@ -1,5 +1,5 @@
 from machine import Pin
-from utime import ticks_ms, ticks_diff, sleep
+from utime import ticks_ms, ticks_diff
 
 from Sensors.Sensor import Sensor
 
@@ -57,7 +57,8 @@ class HumidityTemperature(Sensor):
         humidity = self.sensor.humidity()
         temperature = self.sensor.temperature()
         values = []
-        if self._last_humidity is None or abs(humidity - self._last_humidity) > 0.5:
+        if self._last_humidity is None or abs(humidity - self._last_humidity) > (self._last_humidity / 100.0):
+            self._last_humidity = humidity
             values.append((self.humidity_id, humidity))
         if self._last_temperature is None or abs(temperature - self._last_temperature) > 0.5:
             values.append((self.temperature_id, temperature))
