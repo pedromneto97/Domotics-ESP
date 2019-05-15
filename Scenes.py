@@ -25,7 +25,7 @@ class Scenes:
             return
 
         # if does not exists, append to list
-        if getattr(SensorsTypes, kwargs.get('sensor_types')) == 0:
+        if getattr(SensorsTypes, kwargs.get('sensor_type')) == 0:
             self.sensors.append(HumidityTemperature(pins=kwargs.get('pins'), sensor_type=kwargs.get('sensor_type'),
                                                     sensor=kwargs.get('type'), _id=kwargs.get('_id')))
 
