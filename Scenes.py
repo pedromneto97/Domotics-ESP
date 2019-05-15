@@ -15,7 +15,7 @@ class Scenes:
     def add_sensors(self, **kwargs):
         # Check kwargs
         if kwargs.get('pins') is None or kwargs.get('sensor_type') is None or kwargs.get('_id') is None or kwargs.get(
-                'type'):
+                'type') is None:
             raise Exception('arg required not found')
 
         # if already has the sensor
