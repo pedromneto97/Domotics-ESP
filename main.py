@@ -30,7 +30,8 @@ class Device:
         utime.sleep_ms(200)
         if env.get('scenes'):
             for item in env.get('scenes'):
-                self.scenes.add_sensors(type=item['type'], sensor_type=item['pattern'], _id=item['_id'])
+                self.scenes.add_sensors(type=item['type'], sensor_type=item['pattern'], _id=item['_id'],
+                                        pins=item['pins'])
 
     def read_sensors(self, t=None):
         for scene in self.scenes.sensors:
