@@ -48,7 +48,7 @@ class HumidityTemperature(Sensor):
 
     def measure(self):
         _now = ticks_ms()
-        if self._last_measure is None or ticks_diff(_now, self._last_measure) >= 2:
+        if self._last_measure is None or ticks_diff(_now, self._last_measure) >= 2000:
             self._last_measure = _now
             self.sensor.measure()
 
