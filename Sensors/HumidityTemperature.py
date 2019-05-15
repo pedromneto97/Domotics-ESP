@@ -51,16 +51,16 @@ class HumidityTemperature(Sensor):
             self._last_measure = _now
             self.sensor.measure()
 
-    def temperature(self):
-        self.measure()
-        return self.sensor.temperature()
-
-    def humidity(self):
-        self.measure()
-        return self.sensor.humidity()
-
     def values(self):
-        return [(self.humidity_id, self.humidity), (self.temperature_id, self.temperature)]
+        self.measure()
+        humidity = self.sensor.humidity()
+        temperature = self.sensor.temperature()
+        values = []
+        if self._last_humidity is None or humidity - self._last_humidity > 0.5:
+            values.append((self.humidity_id, humidity))
+        if self._last_temperature is None or temperature - self._last_temperature > 0.5:
+            values.append((self.temperature_id, temperature))
+        return values
 
     def get_sensor(self, type, pins):
         return type == self.sensor_type and pins == self.pins
