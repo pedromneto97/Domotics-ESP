@@ -27,7 +27,6 @@ class Device:
                 ntptime.settime()
             except:
                 pass
-        utime.sleep_ms(200)
         if env.get('scenes'):
             for item in env.get('scenes'):
                 self.scenes.add_sensors(type=item['type'], sensor_type=item['pattern'], _id=item['_id'],
@@ -35,7 +34,7 @@ class Device:
 
     def read_sensors(self, t=None):
         for scene in self.scenes.sensors:
-            for _id, data in scene.value:
+            for _id, data in scene.values():
                 self.set_data(_id, data)
 
     @staticmethod
