@@ -31,8 +31,6 @@ class HumidityTemperature(Sensor):
         self.sensor_type = kwargs.get('sensor_type')
 
         self._last_measure = None
-        self._last_temperature = None
-        self._last_humidity = None
 
         sensor_value = getattr(HumidityTemperatureSensor, self.sensor_type)
 
@@ -45,6 +43,10 @@ class HumidityTemperature(Sensor):
         else:
             raise Exception('sensor not available')
 
+        self.measure()
+        self._last_temperature = self.sensor.temperature()
+        self._last_humidity = self.sensor.humidity()
+
     def measure(self):
         _now = ticks_ms()
         if self._last_measure is None or ticks_diff(_now, self._last_measure) >= 2:
@@ -56,9 +58,9 @@ class HumidityTemperature(Sensor):
         humidity = self.sensor.humidity()
         temperature = self.sensor.temperature()
         values = []
-        if self._last_humidity is None or humidity - self._last_humidity > 0.5:
+        if humidity - self._last_humidity > 0.5:
             values.append((self.humidity_id, humidity))
-        if self._last_temperature is None or temperature - self._last_temperature > 0.5:
+        if temperature - self._last_temperature > 0.5:
             values.append((self.temperature_id, temperature))
         return values
 
