@@ -35,7 +35,7 @@ class Device:
 
         utime.sleep(2)
         self.read_sensors()
-        self.timer.init(mode=Timer.PERIODIC, period=1800000, callback=self.read_sensors)
+        self.timer.init(mode=Timer.PERIODIC, period=6000, callback=self.read_sensors)
 
     def read_sensors(self, t=None):
         for scene in self.scenes.sensors:
