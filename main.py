@@ -32,7 +32,7 @@ class Device:
                 self.scenes.add_sensors(type=item['type'], sensor_type=item['pattern'], _id=item['_id'],
                                         pins=item['pins'])
         self.timer = Timer(0)
-        self.timer.init(mode=Timer.PERIODIC, period=10000, callback=self.read_sensors)
+        self.timer.init(mode=Timer.PERIODIC, period=60000, callback=self.read_sensors)
 
     def read_sensors(self, t=None):
         for scene in self.scenes.sensors:
