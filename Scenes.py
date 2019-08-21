@@ -11,8 +11,14 @@ class SensorsTypes:
 
 
 class Scenes:
-    def __init__(self):
+    def __init__(self, **kwargs):
+        if kwargs.get("publish") is None:
+            raise Exception("Publish callback required")
+        if kwargs.get("call") is None:
+            raise Exception("Call callback required")
         self.sensors = []  # type: [Sensor]
+        self.publish = kwargs.get("publish")
+        self.call = kwargs.get("call")
 
     def add_sensors(self, **kwargs):
         # Check kwargs
@@ -32,8 +38,8 @@ class Scenes:
                                                     sensor=kwargs.get('type'), _id=kwargs.get('_id')))
         elif getattr(SensorsTypes, kwargs.get('sensor_type')) == 1:
             self.sensors.append(Presence(pins=kwargs.get('pins'), sensor_type=kwargs.get('sensor_type'),
-                                         sensor=kwargs.get('type'), _id=kwargs.get('_id'), call=kwargs.get('call'),
-                                         publish=kwargs.get('publish')))
+                                         sensor=kwargs.get('type'), _id=kwargs.get('_id'), call=self.call,
+                                         publish=self.publish))
 
     def has_sensors_type(self, sensor_type, pins):
         for item in self.sensors:
