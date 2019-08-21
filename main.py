@@ -11,12 +11,40 @@ from machine import Timer, idle
 
 from Scenes import Scenes
 
+PUBLISH = "publish"
+CALL = "call"
+
+
+def publish(_id, value):
+    data = {
+        "topic": "com.herokuapp.crossbar-pedro.measurement." + _id + ".create",
+        "args": [ujson.dumps({
+            "sensor": _id,
+            "timestamp": utime.localtime()[0:6],
+            "value": value
+        })]
+    }
+    post(data, PUBLISH)
+
+
+def call(_id):
+    data = {
+        "procedure": "com.herokuapp.crossbar-pedro.actuator." + _id,
+        "args": []
+    }
+    post(data, CALL)
+
+
+def post(data, method):
+    r = urequests.post("https://crossbar-pedro.herokuapp.com/" + method, json=data)
+    r.close()
+
 
 class Device:
     def __init__(self, env):
         self.sta = network.WLAN(network.STA_IF)  # type: network
         self.sta.active(True)
-        self.scenes = Scenes()  # type: Scenes
+        self.scenes = Scenes(publish=publish, call=call)  # type: Scenes
         if env.get('wireless') and env.get('wireless').get('ssid') and env.get('wireless').get('password'):
             self.sta.connect(env.get('wireless').get('ssid'), env.get('wireless').get('password'))
             count = 0
@@ -37,24 +65,11 @@ class Device:
     def read_sensors(self, t=None):
         for scene in self.scenes.sensors:
             for _id, data in scene.values():
-                self.set_data(_id, data)
-
-    @staticmethod
-    def set_data(_id, value):
-        data = {
-            "topic": "com.herokuapp.crossbar-pedro.measurement." + _id + ".create",
-            "args": [ujson.dumps({
-                "sensor": _id,
-                "timestamp": utime.localtime()[0:6],
-                "value": value
-            })]
-        }
-        r = urequests.post("https://crossbar-pedro.herokuapp.com/publish", json=data)
-        r.close()
+                publish(_id, data)
 
 
 if __name__ == '__main__':
-    with open('.env', 'r') as f:
+    with open('env.json', 'r') as f:
         device = Device(ujson.loads(f.read()))
     while True:
         idle()
