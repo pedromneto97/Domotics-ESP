@@ -22,7 +22,7 @@ class Presence(Sensor):
         if kwargs.get('call') is None:
             raise Exception('Call callback required')
 
-        self.pins = kwargs.get('pins')  # method: List[int]
+        self.pins = kwargs.get('pins')  # type: List[int]
         self.input = Pin(self.pins[0], Pin.IN)
         self.input.irq(handler=self.change, trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING)
 
@@ -31,15 +31,15 @@ class Presence(Sensor):
         self.type = kwargs.get('sensor')
         self.add_id(kwargs.get('_id'))
 
-        self.publish = kwargs.get('publish')  # method: Callable
+        self.publish = kwargs.get('publish')  # type: Callable
         self.call = kwargs.get('call')
 
-        self.last_value = 0  # method: int
-        self.last_tick = ticks_ms()  # method: int
+        self.last_value = 0  # type: int
+        self.last_tick = ticks_ms()  # type: int
 
     def change(self, p):
-        value = p.value()  # method: int
-        tick = ticks_ms()  # method: int
+        value = p.value()  # type: int
+        tick = ticks_ms()  # type: int
         if ticks_diff(tick, self.last_tick) > 200 or self.last_value != value:
             self.last_value = value
             self.last_tick = tick
