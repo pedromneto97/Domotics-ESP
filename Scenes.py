@@ -1,4 +1,5 @@
 from Sensors.HumidityTemperature import HumidityTemperature
+from Sensors.Presence import Presence
 from Sensors.Sensor import Sensor
 
 
@@ -6,6 +7,7 @@ class SensorsTypes:
     DHT11 = 0
     DHT22 = 0
     AM2320 = 0
+    HCSR501 = 1
 
 
 class Scenes:
@@ -28,6 +30,10 @@ class Scenes:
         if getattr(SensorsTypes, kwargs.get('sensor_type')) == 0:
             self.sensors.append(HumidityTemperature(pins=kwargs.get('pins'), sensor_type=kwargs.get('sensor_type'),
                                                     sensor=kwargs.get('type'), _id=kwargs.get('_id')))
+        elif getattr(SensorsTypes, kwargs.get('sensor_type')) == 1:
+            self.sensors.append(Presence(pins=kwargs.get('pins'), sensor_type=kwargs.get('sensor_type'),
+                                         sensor=kwargs.get('type'), _id=kwargs.get('_id'), call=kwargs.get('call'),
+                                         publish=kwargs.get('publish')))
 
     def has_sensors_type(self, sensor_type, pins):
         for item in self.sensors:
