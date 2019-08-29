@@ -11,13 +11,15 @@ from machine import Timer, idle
 
 from Scenes import Scenes
 
-PUBLISH = "publish"
-CALL = "call"
+PUBLISH = "publish"  # type: str
+CALL = "call"  # type: str
+HOST = ""  # type: str
+URI = ""  # type:str
 
 
 def publish(_id, value):
     data = {
-        "topic": "com.herokuapp.crossbar-pedro.measurement." + _id + ".create",
+        "topic": URI + ".measurement." + _id + ".create",
         "args": [ujson.dumps({
             "sensor": _id,
             "timestamp": utime.localtime()[0:6],
@@ -29,14 +31,14 @@ def publish(_id, value):
 
 def call(_id):
     data = {
-        "procedure": "com.herokuapp.crossbar-pedro.actuator." + _id,
+        "procedure": URI + ".actuator." + _id,
         "args": []
     }
     post(data, CALL)
 
 
 def post(data, method):
-    r = urequests.post("https://crossbar-pedro.herokuapp.com/" + method, json=data)
+    r = urequests.post("https://" + HOST + "/" + method, json=data)
     r.close()
 
 
@@ -45,6 +47,17 @@ class Device:
         self.sta = network.WLAN(network.STA_IF)  # type: network
         self.sta.active(True)
         self.scenes = Scenes(publish=publish, call=call)  # type: Scenes
+        if env.get('crossbar') and env.get('crossbar').get('host'):
+            global URI, HOST
+            HOST = env.get('crossbar').get('host', "")  # type: str
+            for index, item in enumerate(HOST.split('.')):
+                if index > 0:
+                    URI = item + '.' + URI
+                else:
+                    URI = item
+            print(URI)
+        else:
+            raise Exception('Crossbar Host not found!')
         if env.get('wireless') and env.get('wireless').get('ssid') and env.get('wireless').get('password'):
             self.sta.connect(env.get('wireless').get('ssid'), env.get('wireless').get('password'))
             count = 0
