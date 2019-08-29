@@ -2,6 +2,11 @@ from Sensors.HumidityTemperature import HumidityTemperature
 from Sensors.Presence import Presence
 from Sensors.Sensor import Sensor
 
+try:
+    from typing import List
+except:
+    pass
+
 
 class SensorsTypes:
     DHT11 = 0
@@ -20,29 +25,34 @@ class Scenes:
         self.publish = kwargs.get("publish")
         self.call = kwargs.get("call")
 
-    def add_sensors(self, **kwargs):
-        # Check kwargs
-        if kwargs.get('pins') is None or kwargs.get('sensor_type') is None or kwargs.get('_id') is None or kwargs.get(
+    def add_sensors(self, item):
+        # Check item
+        if item.get('pins') is None or item.get('pattern') is None or item.get('_id') is None or item.get(
                 'type') is None:
             raise Exception('arg required not found')
 
         # if already has the sensor
-        sensor = self.has_sensors_type(kwargs.get('sensor_type'), kwargs.get('pins'))
+        sensor = self.has_sensors_type(item.get('pattern'), item.get('pins'))  # type: Sensor
         if sensor is not None:
-            sensor.add_id(kwargs.get('type'), _id=kwargs.get('_id'))
+            sensor.add_id(item.get('type'), _id=item.get('_id'))
             return
 
         # if does not exists, append to list
-        if getattr(SensorsTypes, kwargs.get('sensor_type')) == 0:
-            self.sensors.append(HumidityTemperature(pins=kwargs.get('pins'), sensor_type=kwargs.get('sensor_type'),
-                                                    sensor=kwargs.get('type'), _id=kwargs.get('_id')))
-        elif getattr(SensorsTypes, kwargs.get('sensor_type')) == 1:
-            self.sensors.append(Presence(pins=kwargs.get('pins'), sensor_type=kwargs.get('sensor_type'),
-                                         sensor=kwargs.get('type'), _id=kwargs.get('_id'), call=self.call,
+        if getattr(SensorsTypes, item.get('pattern')) == 0:
+            self.sensors.append(HumidityTemperature(pins=item.get('pins'), pattern=item.get('pattern'),
+                                                    sensor=item.get('type'), _id=item.get('_id')))
+        elif getattr(SensorsTypes, item.get('pattern')) == 1:
+            self.sensors.append(Presence(pins=item.get('pins'), pattern=item.get('pattern'),
+                                         sensor=item.get('type'), _id=item.get('_id'), call=self.call,
                                          publish=self.publish))
 
-    def has_sensors_type(self, sensor_type, pins):
+    def has_sensors_type(self, pattern, pins):
+        """
+        :param str pattern: Pattern of sensor
+        :param List[int] pins: List of pins
+        :rtype Sensor
+        """
         for item in self.sensors:
-            if item.get_sensor(sensor_type, pins):
+            if item.get_sensor(pattern, pins):
                 return item
         return None

@@ -57,8 +57,7 @@ class Device:
                 pass
         if env.get('scenes'):
             for item in env.get('scenes'):
-                self.scenes.add_sensors(type=item['type'], sensor_type=item['pattern'], _id=item['_id'],
-                                        pins=item['pins'])
+                self.scenes.add_sensors(item)
         self.timer = Timer(0)
         self.timer.init(mode=Timer.PERIODIC, period=60000, callback=self.read_sensors)
 
