@@ -16,16 +16,20 @@ class Presence(Sensor):
             raise Exception('Publish callback required')
         if kwargs.get('call') is None:
             raise Exception('Call callback required')
+        elif kwargs.get('calls') is None:
+            raise Exception('Ids are required')
 
         self._id = None
         self.add_id(self.sensor, kwargs.get('_id'))
-        self.input = Pin(self.pins[0], Pin.IN)
+        self.input = Pin(self.pins[0], Pin.IN)  # type: Pin
         self.input.irq(handler=self.change, trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING)
 
-        self.type = kwargs.get('sensor')
+        self.type = kwargs.get('sensor')  # type: str
 
         self.publish = kwargs.get('publish')  # type: Callable
-        self.call = kwargs.get('call')
+        self.call = kwargs.get('call')  # type: Callable
+
+        self.calls = kwargs.get('calls')  # type: List[str]
 
         self.last_value = 0  # type: int
         self.last_tick = ticks_ms()  # type: int
@@ -39,7 +43,8 @@ class Presence(Sensor):
             self.last_value = value
             self.last_tick = tick
             self.publish(self._id, value)
-            self.call(self._id)
+            for id in self.calls:
+                self.call(id)
 
     def values(self):
         values = [(self._id, self.input.value())]
