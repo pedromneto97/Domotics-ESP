@@ -44,7 +44,7 @@ class Scenes:
         elif getattr(SensorsTypes, item.get('pattern')) == 1:
             self.sensors.append(Presence(pins=item.get('pins'), pattern=item.get('pattern'),
                                          sensor=item.get('type'), _id=item.get('_id'), call=self.call,
-                                         publish=self.publish))
+                                         publish=self.publish, calls=item.get('call')))
 
     def has_sensors_type(self, pattern, pins):
         """
